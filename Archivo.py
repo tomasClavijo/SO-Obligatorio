@@ -7,7 +7,7 @@ class Archivo(object):
     permisos = []
     fecha = str
     #archivo_txt = object
-    contenido = ""
+    contenido = "contenido de prueba"
     propietario = object
 
     def __init__(self, nombre_nuevo, nuevo_propietario):

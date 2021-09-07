@@ -13,8 +13,7 @@ if __name__ == "__main__":
     usuario_principal = Usuario("root")
     usuario_principal.esRoot = True
     raiz = Directorio("directorioPrincipal")
-    os.mkdir("directorioPrincipal")
-
+    #os.mkdir("directorioPrincipal")
 
     lista_usuarios.append(usuario_principal)
     lista_directorios.append(raiz)

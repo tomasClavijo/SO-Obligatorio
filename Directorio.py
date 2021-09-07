@@ -9,6 +9,7 @@ class Directorio(object):
     permisos = []
     fecha = str
 
+
     def __init__(self, nombre_nuevo):
         self.nombre = nombre_nuevo
         self.subdirectorios = []

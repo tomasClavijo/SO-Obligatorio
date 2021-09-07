@@ -71,9 +71,16 @@ def ej_cp():
     pass
 
 
-def ej_cat():
-    pass
+def ej_cat(nombre_archivo, directorio_actual, usuario_actual):
+    esta = False
 
+    for archivo in directorio_actual.archivos:
+        if archivo.nombre == nombre_archivo:
+            print(archivo.contenido)
+            esta = True
+
+    if not esta:
+        print("cat: "+nombre_archivo+": No such file or directory")
 
 def ej_rm():
     pass
@@ -136,6 +143,12 @@ def comando_ejecucion(comando_ejecutar, lista_directorios, lista_usuarios, usuar
     elif comando == "touch":
         try:
             ej_touch(directorio_actual, comando_partes[1], usuario_actual)
+        except IndexError:
+            print("error archivo linux")
+
+    elif comando == "cat":
+        try:
+            ej_cat(comando_partes[1], directorio_actual, usuario_actual)
         except IndexError:
             print("error archivo linux")
 
