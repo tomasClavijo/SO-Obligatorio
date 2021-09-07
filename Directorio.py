@@ -4,6 +4,7 @@ import datetime
 class Directorio(object):
     nombre = str
     directorio_padre = object
+    archivos = []
     subdirectorios = []
     permisos = []
     fecha = str

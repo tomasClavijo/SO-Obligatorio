@@ -1,5 +1,6 @@
 from Directorio import Directorio
 from Usuario import Usuario
+from Archivo import Archivo
 
 
 def ej_useradd(nombre_usuario, lista_usuarios):
@@ -48,8 +49,14 @@ def ej_mkdir(directorio_actual, nombre):
 def ejecutar_cd(directorio_padre=Directorio, ruta=str):
     pass
 
-def ej_touch():
-    pass
+
+def ej_touch(directorio, nombre_archivo, nuevo_propietario):
+
+    # f = open(nombre_archivo, "w+")
+    # nuevo_archivo.archivo_txt = f
+    nuevo_archivo = Archivo(nombre_archivo, nuevo_propietario)
+    nuevo_archivo.directorio = directorio
+    directorio.archivos.append(nuevo_archivo)
 
 
 def ej_echo():
@@ -126,8 +133,13 @@ def comando_ejecucion(comando_ejecutar, lista_directorios, lista_usuarios, usuar
         except IndexError:
             print("mkdir: missing operand")
 
-    elif comando == "cd":
+    elif comando == "touch":
+        try:
+            ej_touch(directorio_actual, comando_partes[1], usuario_actual)
+        except IndexError:
+            print("error archivo linux")
 
+    elif comando == "cd":
         try:
             ejecutar_cd(directorio_actual, comando_partes[1])
         except IndexError:
