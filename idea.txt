@@ -1,0 +1,48 @@
+Gestion de usuarios:
+
+	Tenemos dos tipos de usuarios. Usuario root y usuario normal. En el objeto puedo incluir un tipo bool para ver si es o no un usuario root.
+
+	useradd nombreUsuario: crea un objeto de tipo usuario y le asigna el nombre, la contrasena no es necesaria.
+	passwd nombreUsuario: al objeto con el nombre "nombreUsuario" le modifica la contrasena, debe ingresarla dos veces y si no coinciden muestra un error. Luego de mostrar un error es necesario ingresar el comando de nuevo?
+
+	su nombreUsuario: Luego de pedirnos la contraseña, nos permite autenticarnos con otro usuario. Se busca en la lista de usuarios el usuario "nombreUsuario", i no se encuentra se tira error y si se encuentra se pide la contrasena. Se va a necesitar una variable que tenga al usuario que se esta usando en el momento "usuarioActual".
+
+	whoami: imprimo el nombre del objeto usuario que va a tener la variable "usuarioActual"
+
+
+
+Gestion de sistema de archivos:
+
+Si se implementa con una lista, podemos tener todo el sistema de archivos. Carpetas dentro de otra carpeta son objetos "Carpeta" con su propia lista de carpetas y sus archivos (tambien objetos).
+Se puede tener la lista global (solo se agregan y eliminan directorios/archivos) y la lista actual, que es una lista que me indica donde estoy parado y a las carpetas/directorios que puedo acceder.
+
+pwd: podemos imprimir un string de los nombres de las carpetas desde la "/" hasta la actual solamente recorriendo la lista global.
+
+mkdir nombreDir: en la carpeta donde me encuentro (lista actual) creo un nuevo objeto directorio y lo agrego a la lista de la lista actual.
+
+touch nombreArch: en la carpeta donde me encuentro (lista actual) creo un nuevo objeto archivo y lo agrego a la lista de la lista actual.
+
+echo "Texto" >> archivo.txt: con la lista actual accedo con las librerias incluidas en python de edicion de archivos, al documento (que estara dentro del objeto (la variable f = open(archivo.txt))) y le agrego la linea con f.write("Texto\n"), luego uso f.close().
+
+mv rutaOrigen rutaDestino:
+
+cp rutaOrigen rutaDestino: con la lista global voy comparando nombre por nombre de las carpetas y comparando los valores del objeto hasta llegar a la carpeta destino y ahí con bibliotecas de Python copio el archivo o creo una totalmente nuevo con la misma información.
+
+cat archivo: accedo al objeto y con f.open leeo el archivo e imprimo en pantalla
+
+RM archivo: con bibliotecas de python elimino el archivo
+
+cd ruta: tengo que implementar también "cd .." lo qué puedo hacer para cada objeto directorio es guardarme una variable que tenga la ruta de la carpeta anterior. Si me pasan una ruta entera que empieza por el inicio por el Slash puedo guardarme la ubicacion actual del proyecto (donde se inicia el programa python) y luego moverme con python a la ruta nueva. Otra manera puedo ir verificando nombre a nombre de cada carpeta con mi lista global que va a tener toda la ruta de mi sistema de archivos y si recorro todos y no lo encuentro le le tiró un error.
+
+ls -l: la lista actual que contiene el sistema de arhcivos del directorio donde estoy parado cuenta con todos los subdirectorios y los archivos, todos estos son objetos que cuentan con su lista de usuarios, permisos, fechas etc. Para esto necesito que cada objeto archivo y cada objeto direcotrio mantener una lista de sus de sus propietarios de los dos permisos que tienen los propietarios y los permisos que tienen el Grupo y los demás.
+
+history: history muestra histórico de comandos ordenados del primero al último realizado por el usuario autenticado cada vez que ingreso por un usuario voy a reiniciar la lista que contiene el historial de comandos. DUDA: el historial se elimina cada vez que cambio de usuario o tiene que quedar un registro de los comandos ejecutador por lo usuarios anteriores?
+
+
+
+Gestion de permisos:
+
+	 chmod XYZ archivo: aplica permisos al PROPIETARIO y al RESTO de los usuarios, no trabajamos con grupos. Mi objeto archivo puede tener un string que sea "---" hasta "rwx" para similar los valores octales. Y para ver si el propietario tiene permisos de escritura por ejemplo, me fijo si en la posicion 0 del string "rwx".
+
+
+	 chown usuario archivo: cambia el prop. del archivo por el usuario, tengo que solo cambiar la variable "propietario" que va a tener mi objeto archivo.
