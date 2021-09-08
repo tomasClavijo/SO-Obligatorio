@@ -22,9 +22,7 @@ def ej_passwd(nombre_usuario, lista_usuarios):
                 esta = True
             else:
                 print("mensaje de error")
-    if esta:
-        pass
-    else:
+    if not esta:
         print("Ver el mensaje de error que sale en Linux.")
 
 
@@ -122,7 +120,7 @@ def comando_ejecucion(comando_ejecutar, lista_directorios, lista_usuarios, usuar
         ej_passwd(comando_partes[1], lista_usuarios)
 
     elif comando == "su":
-        contrasena = input("Ingrese contrasena (ver en Linux como lo preguntan): ")
+        contrasena = input("Password: ")
         ej_su(comando_partes[1], lista_usuarios, usuario_actual, contrasena)
 
     elif comando == "pwd":
