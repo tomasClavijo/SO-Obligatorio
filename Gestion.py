@@ -82,6 +82,7 @@ def ej_cat(nombre_archivo, directorio_actual, usuario_actual):
     if not esta:
         print("cat: "+nombre_archivo+": No such file or directory")
 
+
 def ej_rm():
     pass
 
