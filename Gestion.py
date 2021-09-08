@@ -15,7 +15,7 @@ def ej_passwd(nombre_usuario, lista_usuarios):
     esta = False
     for usuario in lista_usuarios:
         if usuario.nombre == nombre_usuario:
-            contrasena_ingresada = input("Ingrese contrasena (ver en Linux como lo preguntan): ")
+            contrasena_ingresada = input("Password: ")
             usuario.ingresar_contrasena(contrasena_ingresada)
             esta = True
     if esta:
