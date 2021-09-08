@@ -16,8 +16,12 @@ def ej_passwd(nombre_usuario, lista_usuarios):
     for usuario in lista_usuarios:
         if usuario.nombre == nombre_usuario:
             contrasena_ingresada = input("Password: ")
-            usuario.ingresar_contrasena(contrasena_ingresada)
-            esta = True
+            contrasena_ingresada_dos = input("Password: ")
+            if contrasena_ingresada == contrasena_ingresada_dos:
+                usuario.ingresar_contrasena(contrasena_ingresada)
+                esta = True
+            else:
+                print("mensaje de error")
     if esta:
         pass
     else:
