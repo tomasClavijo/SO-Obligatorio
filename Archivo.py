@@ -7,12 +7,13 @@ class Archivo(object):
     permisos = []
     fecha = str
     #archivo_txt = object
-    contenido = "contenido de prueba"
+    contenido = ""
     propietario = object
 
-    def __init__(self, nombre_nuevo, nuevo_propietario):
+    def __init__(self, nombre_nuevo, nuevo_propietario, contenido):
         self.nombre = nombre_nuevo
         self.propietario = nuevo_propietario
+        self.contenido = contenido
         fecha = datetime.datetime.now()
         self.fecha = fecha.strftime("%b %d %H:%M")
         self.permisos = ["-", "rwx", "r-x", "r-x"]  # Permisos por defecto.

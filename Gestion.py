@@ -52,17 +52,32 @@ def ejecutar_cd(directorio_padre=Directorio, ruta=str):
     pass
 
 
-def ej_touch(directorio, nombre_archivo, nuevo_propietario):
+def ej_touch(directorio, nombre_archivo, nuevo_propietario, contenido):
 
     # f = open(nombre_archivo, "w+")
     # nuevo_archivo.archivo_txt = f
-    nuevo_archivo = Archivo(nombre_archivo, nuevo_propietario)
+    nuevo_archivo = Archivo(nombre_archivo, nuevo_propietario, contenido)
     nuevo_archivo.directorio = directorio
     directorio.archivos.append(nuevo_archivo)
 
 
-def ej_echo():
-    pass
+def ej_echo(texto_archivo, nombre_archivo, directorio_actual, usuario_actual):
+
+    esta = False
+
+    """ Consulta, el archivo se asume como creado? """
+    for archivo in directorio_actual.archivos:
+        if archivo.nombre == nombre_archivo:
+            archivo.contenido += "\n"+texto_archivo
+            esta = True
+
+    if not esta:
+        ej_touch(directorio_actual, nombre_archivo, usuario_actual, texto_archivo)
+
+
+def prueba_mostrar_contenido(directorio_actual, usuario_actual):
+    for i in directorio_actual.archivos:
+        print(i.nombre + i.contenido)
 
 
 def ej_mv():
@@ -110,7 +125,7 @@ def mostrar_todo():     # Solo de prueba
 
 
 def comando_ejecucion(comando_ejecutar, lista_directorios, lista_usuarios, usuario_actual, directorio_actual):
-    comando_partes = comando_ejecutar.split(" ", 3)
+    comando_partes = comando_ejecutar.split(" ")
     comando = comando_partes[0]
 
     if comando == "useradd":
@@ -145,9 +160,21 @@ def comando_ejecucion(comando_ejecutar, lista_directorios, lista_usuarios, usuar
 
     elif comando == "touch":
         try:
-            ej_touch(directorio_actual, comando_partes[1], usuario_actual)
+            ej_touch(directorio_actual, comando_partes[1], usuario_actual, "")
         except IndexError:
             print("error archivo linux")
+
+    elif comando == "echo":
+        comando_partes.pop(0)
+
+        texto_lista = comando_partes[0:len(comando_partes)-2]
+        texto = " ".join(texto_lista)
+
+        try:
+            ej_echo(texto, comando_partes[len(comando_partes)-1], directorio_actual, usuario_actual)
+            prueba_mostrar_contenido(directorio_actual, usuario_actual)
+        except IndexError:
+            print("error echo linux")
 
     elif comando == "cat":
         try:
