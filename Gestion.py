@@ -2,6 +2,10 @@ from Directorio import Directorio
 from Usuario import Usuario
 from Archivo import Archivo
 
+historial = {}
+
+def leer_ruta():
+    pass
 
 def ej_useradd(nombre_usuario, lista_usuarios):
     if lista_usuarios.count(nombre_usuario) == 0:
@@ -11,19 +15,22 @@ def ej_useradd(nombre_usuario, lista_usuarios):
         print("Ver el mensaje de error que sale en Linux.")
 
 
-def ej_passwd(nombre_usuario, lista_usuarios):
-    esta = False
-    for usuario in lista_usuarios:
-        if usuario.nombre == nombre_usuario:
-            contrasena_ingresada = input("Password: ")
-            contrasena_ingresada_dos = input("Password: ")
-            if contrasena_ingresada == contrasena_ingresada_dos:
-                usuario.ingresar_contrasena(contrasena_ingresada)
-                esta = True
-            else:
-                print("mensaje de error")
-    if not esta:
-        print("Ver el mensaje de error que sale en Linux.")
+def ej_passwd(nombre_usuario, lista_usuarios, usuario_actual):
+    if usuario_actual.nombre == "root":
+        esta = False
+        for usuario in lista_usuarios:
+            if usuario.nombre == nombre_usuario:
+                contrasena_ingresada = input("Password: ")
+                contrasena_ingresada_dos = input("Password: ")
+                if contrasena_ingresada == contrasena_ingresada_dos:
+                    usuario.ingresar_contrasena(contrasena_ingresada)
+                    esta = True
+                else:
+                    print("mensaje de error")
+        if not esta:
+            print("Ver el mensaje de error que sale en Linux.")
+    else:
+        print("Ver mensaje de error en linux")
 
 
 def ej_su(nombre_usuario, lista_usuarios, usuario_actual, contrasena):
@@ -31,6 +38,9 @@ def ej_su(nombre_usuario, lista_usuarios, usuario_actual, contrasena):
         for usuario in lista_usuarios:
             if usuario.nombre == nombre_usuario and usuario.contrasena == contrasena:
                 usuario_actual = usuario
+                historial = {}
+    else:
+        print("ver error su en linux")
 
 
 def ej_whoami(usuario_actual):
@@ -45,11 +55,41 @@ def ej_pwd(lista_directorios):
 
 
 def ej_mkdir(directorio_actual, nombre):
-    directorio_actual.subdirectorios.append(Directorio(nombre))
+    nuevo = Directorio(nombre)
+    nuevo.directorio_padre = directorio_actual
+    directorio_actual.subdirectorios.append(nuevo)
 
 
-def ejecutar_cd(directorio_padre=Directorio, ruta=str):
-    pass
+def ejecutar_cd(directorio_actual, ruta=str):
+
+    if ruta == "..":
+        directorio_actual = directorio_actual.directorio_padre
+        
+
+    """ruta_origen_lista = ruta_origen.split("/")
+    ruta_destino_lista = ruta_destino.split("/")
+    directorio_aux = raiz
+    print(directorio_actual)
+
+    if raiz.nombre == ruta_origen_lista[0]: # Caso ruta completa.
+        contador = 1
+        correcta = True
+        while contador != len(ruta_origen_lista)-1 and correcta:
+            for i in directorio_aux.subdirectorios:
+                if i.nombre == ruta_origen_lista[contador]:
+                    contador += 1
+                    directorio_aux = i
+                else:
+                    print("ruta mala, error linux")
+                    correcta = False
+        if correcta:
+            for i in directorio_aux.archivos:
+                if i.nombre == ruta_origen_lista[len(ruta_origen_lista)-1]:
+                    pass
+                    # mover
+        
+    else: # Caso ruta desde posicion relativa.
+        pass"""
 
 
 def ej_touch(directorio, nombre_archivo, nuevo_propietario, contenido):
@@ -80,8 +120,35 @@ def prueba_mostrar_contenido(directorio_actual, usuario_actual):
         print(i.nombre + i.contenido)
 
 
-def ej_mv():
-    pass
+def ej_mv(ruta_origen, ruta_destino, usuario_actual, directorio_actual, raiz):
+
+    # ["/", "a1", "b2"]
+
+    ruta_origen_lista = ruta_origen.split("/")
+    ruta_destino_lista = ruta_destino.split("/")
+    directorio_aux = raiz
+    print(directorio_actual)
+
+    if raiz.nombre == ruta_origen_lista[0]: # Caso ruta completa.
+        contador = 1
+        correcta = True
+        while contador != len(ruta_origen_lista)-1 and correcta:
+            for i in directorio_aux.subdirectorios:
+                if i.nombre == ruta_origen_lista[contador]:
+                    contador += 1
+                    directorio_aux = i
+                else:
+                    print("ruta mala, error linux")
+                    correcta = False
+
+        if correcta:
+            for i in directorio_aux.archivos:
+                if i.nombre == ruta_origen_lista[len(ruta_origen_lista)-1]:
+                    pass
+                    # mover
+
+    else: # Caso ruta desde posicion relativa.
+        pass
 
 
 def ej_cp():
@@ -100,17 +167,39 @@ def ej_cat(nombre_archivo, directorio_actual, usuario_actual):
         print("cat: "+nombre_archivo+": No such file or directory")
 
 
-def ej_rm():
-    pass
+def ej_rm(nombre_archivo, directorio_actual, usuario_actual):
+    contador = 0
+    esta = False
 
+    for archivo in directorio_actual.archivos:
+        print(archivo.nombre + "~~~" + archivo.contenido)
+        print(contador)
+        if archivo.nombre == nombre_archivo:
+            archivo.contenido = ""
+            esta = True
+        contador += 1
+        directorio_actual.archivos.pop(contador)
+    if not esta:
+        print("rm: cannot remove " + nombre_archivo + ": No such file or directory")
 
 def ej_lsl():
     pass
 
 
-def ej_history():
-    pass
-
+def ej_his_grep(palabra_buscar):
+    print(palabra_buscar)
+    palabra_buscar = palabra_buscar.replace('"', '')
+    print(palabra_buscar)
+    """linea = ""
+    for numero, comando in historial.items():
+        linea = str(numero) + " " + comando
+        if palabra_buscar == linea:
+            print(linea)
+        if palabra_buscar.isupper() and linea == palabra_buscar.upper():
+            print(linea)
+        elif not (palabra_buscar.isupper()) and linea == palabra_buscar:
+            print(linea)"""
+    
 
 def ej_chmod():
     pass
@@ -124,7 +213,9 @@ def mostrar_todo():     # Solo de prueba
     pass
 
 
-def comando_ejecucion(comando_ejecutar, lista_directorios, lista_usuarios, usuario_actual, directorio_actual):
+def comando_ejecucion(comando_ejecutar, lista_directorios, lista_usuarios, usuario_actual, directorio_actual, raiz):
+    if comando_ejecutar != "":
+        historial[len(historial) + 1] = comando_ejecutar
     comando_partes = comando_ejecutar.split(" ")
     comando = comando_partes[0]
 
@@ -133,7 +224,7 @@ def comando_ejecucion(comando_ejecutar, lista_directorios, lista_usuarios, usuar
         ej_useradd(comando_partes[1], lista_usuarios)
 
     elif comando == "passwd":
-        ej_passwd(comando_partes[1], lista_usuarios)
+        ej_passwd(comando_partes[1], lista_usuarios, usuario_actual)
 
     elif comando == "su":
         contrasena = input("Password: ")
@@ -176,6 +267,18 @@ def comando_ejecucion(comando_ejecutar, lista_directorios, lista_usuarios, usuar
         except IndexError:
             print("error echo linux")
 
+    elif comando == "mv":
+        try:
+            ej_mv(comando_partes[1], comando_partes[2], usuario_actual, directorio_actual, raiz)
+        except IndexError:
+            print("error move linux")
+
+    elif comando == "rm":
+        try:
+            ej_rm(comando_partes[1], directorio_actual, usuario_actual)
+        except IndexError:
+            print("error rm linux aaaa")
+
     elif comando == "cat":
         try:
             ej_cat(comando_partes[1], directorio_actual, usuario_actual)
@@ -188,11 +291,21 @@ def comando_ejecucion(comando_ejecutar, lista_directorios, lista_usuarios, usuar
         except IndexError:
             print("Ver mensaje de error en linux")
 
+    elif comando == "history":
+        for numero, comando in historial.items():
+            print(str(numero) + " " + comando)
+
     elif comando == "ls":
         for directorio in directorio_actual.subdirectorios:
             print(directorio.nombre)
         for archivo in directorio_actual.archivos:
             print(archivo.nombre)
+
+    elif comando == "history" and comando_partes[2] == "grep":
+        try:
+            ej_his_grep(comando_partes[3])
+        except IndexError:
+            print("Ver mensaje de error en linux")
 
     """switcher = {
         "cd": ejecutar_cd(),

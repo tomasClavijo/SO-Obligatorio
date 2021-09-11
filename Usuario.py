@@ -1,7 +1,6 @@
 class Usuario(object):
     nombre = ''
     contrasena = ''
-    esRoot = False
 
     def __init__(self, nombre_usuario=str):
         self.nombre = nombre_usuario

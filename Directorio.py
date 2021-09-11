@@ -23,3 +23,6 @@ class Directorio(object):
 
     def es_hijo_de(self, padre=object):
         self.directorio_padre = padre
+
+    def imprimir(self):
+        print(self.nombre + "~~~" + self.fecha + "~~~" + self.permisos)
