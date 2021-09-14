@@ -11,7 +11,6 @@ if __name__ == "__main__":
     lista_directorios = []
 
     usuario_principal = Usuario("root")
-    usuario_principal.esRoot = True
     raiz = Directorio("directorioPrincipal")
     #os.mkdir("directorioPrincipal")
 
@@ -26,7 +25,7 @@ if __name__ == "__main__":
         if comando == "exit":
             break
         else:
-            comando_ejecucion(comando, lista_directorios, lista_usuarios, usuario_actual, directorio_actual)
+            comando_ejecucion(comando, lista_directorios, lista_usuarios, usuario_actual, directorio_actual, raiz)
 
     """
     
