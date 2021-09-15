@@ -1,0 +1,1 @@
+De alguna manera (sacando el usuario de los parametros creo) tengo que actualizar el usuario actual luego de ejecutar el su. Linea 238
