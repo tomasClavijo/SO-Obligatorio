@@ -23,5 +23,7 @@ class Archivo(object):
         # [3] permisos de otros
 
     def mostrar_datos(self):
-        pass
-        #print(self.permisos.join("-") + )
+        permisos = ""
+        for permiso in self.permisos:
+            permisos += permiso
+        print(permisos + " " + self.propietario.nombre + self.fecha + " " + self.nombre)

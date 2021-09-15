@@ -9,10 +9,11 @@ class Directorio(object):
     permisos = []
     fecha = str
 
-    def __init__(self, nombre_nuevo):
+    def __init__(self, nombre_nuevo, nuevo_propietario):
         self.nombre = nombre_nuevo
         self.subdirectorios = []
         self.archivos = []
+        self.propietario = nuevo_propietario
         fecha = datetime.datetime.now()
         self.fecha = fecha.strftime("%b %d %H:%M")
         self.permisos = ["d", "rwx", "r-x", "r-x"]  # Permisos por defecto.
@@ -26,3 +27,9 @@ class Directorio(object):
 
     def imprimir(self):
         print(self.nombre + "~~~" + self.fecha + "~~~" + self.permisos)
+
+    def mostrar_datos(self):
+        permisos = ""
+        for permiso in self.permisos:
+            permisos += permiso
+        print(permisos + " " + self.propietario.nombre + self.fecha + " " + self.nombre)

@@ -4,6 +4,7 @@ class Usuario(object):
 
     def __init__(self, nombre_usuario=str):
         self.nombre = nombre_usuario
+        self.contrasena = ''
 
     def nombre_correcto(self, nombre_ingresado):
         if self.nombre == nombre_ingresado:
