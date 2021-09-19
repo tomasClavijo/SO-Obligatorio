@@ -33,20 +33,6 @@ def ej_passwd(nombre_usuario, lista_usuarios, usuario_actual):
         print("Ver mensaje de error en linux")
 
 
-def ej_su(nombre_usuario, lista_usuarios, contrasena):
-    esta = False
-    for usuario in lista_usuarios:
-        if usuario.nombre == nombre_usuario:
-            esta = True
-            if usuario.contrasena == contrasena:
-                historial = {}  # Se reinicia el historial cuando se cambia de usuario.
-                return usuario
-            else:
-                print("ver mensaje de contrasena incorrecta")
-    if not esta:
-        print("ver error SU en linux")
-
-
 def ej_whoami(usuario_actual):
     print(usuario_actual.nombre)
 
@@ -220,10 +206,10 @@ def mostrar_todo():     # Solo de prueba
     pass
 
 
-def comando_ejecucion(comando_ejecutar, lista_directorios, lista_usuarios, usuario_actual, directorio_actual, raiz):
-    if comando_ejecutar != "":
-        historial[len(historial) + 1] = comando_ejecutar
-    comando_partes = comando_ejecutar.split(" ")
+def comando_ejecucion(comando_entero, comando_partes, lista_directorios, lista_usuarios, usuario_actual, directorio_actual, raiz):
+    if comando_entero != "":
+        historial[len(historial) + 1] = comando_entero
+    #comando_partes = comando_ejecutar.split(" ")
     comando = comando_partes[0]
 
     if comando == "useradd":
@@ -233,9 +219,10 @@ def comando_ejecucion(comando_ejecutar, lista_directorios, lista_usuarios, usuar
     elif comando == "passwd":
         ej_passwd(comando_partes[1], lista_usuarios, usuario_actual)
 
-    elif comando == "su":
-        contrasena = input("Password: ")
-        usuario_actual = ej_su(comando_partes[1], lista_usuarios, contrasena)
+    #elif comando == "su":
+        #pass
+        # contrasena = input("Password: ")
+        # usuario_actual = ej_su(comando_partes[1], lista_usuarios, contrasena)
 
     elif comando == "pwd":
 

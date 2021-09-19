@@ -1,1 +1,3 @@
-De alguna manera (sacando el usuario de los parametros creo) tengo que actualizar el usuario actual luego de ejecutar el su. Linea 238
+Ver si en en el "SU" la contrasena del usuario se
+pide directamente despues de ingresar el nombre del usuario
+o primero se fija si existe o no el usuario.
