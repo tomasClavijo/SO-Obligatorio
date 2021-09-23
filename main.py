@@ -5,35 +5,6 @@ from Gestion import *
 import os
 
 
-def ej_su(nombre_usuario, contrasena, usuarios, usuario_actual):
-    esta = False
-    for usuario in usuarios:
-        if usuario.nombre == nombre_usuario:
-            esta = True
-            if usuario.contrasena == contrasena:
-                historial = {}  # Se reinicia el historial cuando se cambia de usuario.
-                return usuario
-            else:
-                print("ver mensaje de contrasena incorrecta")
-                return usuario_actual
-    if not esta:
-        print("ver error SU en linux")
-        return usuario_actual
-
-
-def ej_cd2(ruta, lista_directorios, usuario_actual, directorio_actual):
-
-    if ruta != "" or ruta != "." or not (".txt" in ruta):
-        if ruta == "..":
-            return directorio_actual.directorio_padre
-        else:
-            ruta_directorios = ruta.split("/")
-            for directorio in directorio_actual.subdirectorios:
-                if directorio.nombre == ruta_directorios[0]:
-                    return directorio
-
-
-
 if __name__ == "__main__":
 
     lista_usuarios = []

@@ -35,6 +35,22 @@ def ej_passwd(nombre_usuario, lista_usuarios, usuario_actual):
         print("Ver mensaje de error en linux")
 
 
+def ej_su(nombre_usuario, contrasena, usuarios, usuario_actual):
+    esta = False
+    for usuario in usuarios:
+        if usuario.nombre == nombre_usuario:
+            esta = True
+            if usuario.contrasena == contrasena:
+                historial = {}  # Se reinicia el historial cuando se cambia de usuario.
+                return usuario
+            else:
+                print("ver mensaje de contrasena incorrecta")
+                return usuario_actual
+    if not esta:
+        print("ver error SU en linux")
+        return usuario_actual
+
+
 def ej_whoami(usuario_actual):
     print(usuario_actual.nombre)
 
@@ -174,6 +190,18 @@ def ej_rm(nombre_archivo, directorio_actual, usuario_actual):
         directorio_actual.archivos.pop(contador)
     if not esta:
         print("rm: cannot remove " + nombre_archivo + ": No such file or directory")
+
+
+def ej_cd2(ruta, lista_directorios, usuario_actual, directorio_actual):
+
+    if ruta != "" or ruta != "." or not (".txt" in ruta):
+        if ruta == "..":
+            return directorio_actual.directorio_padre
+        else:
+            ruta_directorios = ruta.split("/")
+            for directorio in directorio_actual.subdirectorios:
+                if directorio.nombre == ruta_directorios[0]:
+                    return directorio
 
 
 def ej_lsl(directorio_actual, usuario_actual):
