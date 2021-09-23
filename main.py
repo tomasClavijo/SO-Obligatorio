@@ -31,6 +31,6 @@ if __name__ == "__main__":
             usuario_actual = ej_su(comando_partes[1], contrasena, lista_usuarios, usuario_actual)
             pass
         elif comando_partes[0] == "cd":
-            directorio_actual = ej_cd2(comando_partes[1], lista_directorios, usuario_actual, directorio_actual)
+            directorio_actual = ej_cd2(comando_partes[1], directorio_actual, usuario_actual, lista_directorios)
         else:
             comando_ejecucion(comando, comando_partes, lista_directorios, lista_usuarios, usuario_actual, directorio_actual, raiz)

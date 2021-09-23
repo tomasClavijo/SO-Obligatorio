@@ -192,16 +192,45 @@ def ej_rm(nombre_archivo, directorio_actual, usuario_actual):
         print("rm: cannot remove " + nombre_archivo + ": No such file or directory")
 
 
-def ej_cd2(ruta, lista_directorios, usuario_actual, directorio_actual):
+def cd_aux(ruta, directorio_actual):
+    while len(ruta) != 0:
+        for directorio in directorio_actual.subdirectorios:
+            if ruta[0] == directorio.nombre:
+                ruta.pop(0)
+    return directorio
+
+
+def prueba(ruta, directorio_actual):
+
+    if not ruta:
+        return directorio_actual
+    else:
+        if not directorio_actual.subdirectorios:
+            pass
+        else:
+            for directorio in directorio_actual.subdirectorios:
+                if ruta[0] == directorio.nombre:
+                    ruta.pop(0)
+                    return prueba(ruta, directorio)
+
+
+def ej_cd2(ruta, directorio_actual, usuario_actual, lista_directorios):
+
+    ruta_directorios = ruta.split("/")
+    ruta_entera = False
+    # for directorio in directorio_actual.subdirectorios:
+    #     if directorio.nombre == ruta_directorios[0]:
+    #         ruta_entera = False
+    #         print("Ruta relativa")
 
     if ruta != "" or ruta != "." or not (".txt" in ruta):
         if ruta == "..":
-            return directorio_actual.directorio_padre
-        else:
-            ruta_directorios = ruta.split("/")
-            for directorio in directorio_actual.subdirectorios:
-                if directorio.nombre == ruta_directorios[0]:
-                    return directorio
+            if directorio_actual.directorio_padre is not None:
+                return directorio_actual.directorio_padre
+            else:
+                return directorio_actual
+        elif not ruta_entera:
+            return prueba(ruta_directorios, directorio_actual)
 
 
 def ej_lsl(directorio_actual, usuario_actual):
