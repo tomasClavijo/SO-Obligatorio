@@ -1,3 +1,5 @@
 Ver si en en el "SU" la contrasena del usuario se
 pide directamente despues de ingresar el nombre del usuario
 o primero se fija si existe o no el usuario.
+
+Mover los metodos que estan main para Gestion.py y llamarlos desde ahi.

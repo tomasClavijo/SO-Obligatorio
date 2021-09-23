@@ -4,8 +4,10 @@ from Archivo import Archivo
 
 historial = {}
 
+
 def leer_ruta():
     pass
+
 
 def ej_useradd(nombre_usuario, lista_usuarios):
     if lista_usuarios.count(nombre_usuario) == 0:
@@ -37,11 +39,14 @@ def ej_whoami(usuario_actual):
     print(usuario_actual.nombre)
 
 
-def ej_pwd(lista_directorios):
-    ruta = ""
-    for directorio in lista_directorios:
-        ruta += directorio.nombre
-    print(ruta)
+def ej_pwd(directorio_actual):
+    retorno = ""
+    directorio_aux = directorio_actual
+    while directorio_aux.directorio_padre is not None:
+        retorno = "/" + directorio_aux.nombre + retorno
+        directorio_aux = directorio_aux.directorio_padre
+    retorno = "/" + directorio_aux.nombre + retorno
+    print(retorno)
 
 
 def ej_mkdir(nombre, directorio_actual, usuario_actual):
@@ -226,7 +231,7 @@ def comando_ejecucion(comando_entero, comando_partes, lista_directorios, lista_u
 
     elif comando == "pwd":
 
-        ej_pwd(lista_directorios)
+        ej_pwd(directorio_actual)
 
     elif comando == "whoami":
 

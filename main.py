@@ -21,6 +21,19 @@ def ej_su(nombre_usuario, contrasena, usuarios, usuario_actual):
         return usuario_actual
 
 
+def ej_cd2(ruta, lista_directorios, usuario_actual, directorio_actual):
+
+    if ruta != "" or ruta != "." or not (".txt" in ruta):
+        if ruta == "..":
+            return directorio_actual.directorio_padre
+        else:
+            ruta_directorios = ruta.split("/")
+            for directorio in directorio_actual.subdirectorios:
+                if directorio.nombre == ruta_directorios[0]:
+                    return directorio
+
+
+
 if __name__ == "__main__":
 
     lista_usuarios = []
@@ -29,6 +42,7 @@ if __name__ == "__main__":
     usuario_principal = Usuario("root")
     usuario_principal.ingresar_contrasena("root")
     raiz = Directorio("directorioPrincipal", usuario_principal)
+    raiz.directorio_padre = None
 
     lista_usuarios.append(usuario_principal)
     lista_directorios.append(raiz)
@@ -45,5 +59,7 @@ if __name__ == "__main__":
             contrasena = input("Password: ")
             usuario_actual = ej_su(comando_partes[1], contrasena, lista_usuarios, usuario_actual)
             pass
+        elif comando_partes[0] == "cd":
+            directorio_actual = ej_cd2(comando_partes[1], lista_directorios, usuario_actual, directorio_actual)
         else:
             comando_ejecucion(comando, comando_partes, lista_directorios, lista_usuarios, usuario_actual, directorio_actual, raiz)
