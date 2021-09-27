@@ -31,6 +31,7 @@ if __name__ == "__main__":
             usuario_actual = ej_su(comando_partes[1], contrasena, lista_usuarios, usuario_actual)
             pass
         elif comando_partes[0] == "cd":
-            directorio_actual = ej_cd2(comando_partes[1], directorio_actual, usuario_actual, lista_directorios)
+            retorno = ej_cd(comando_partes[1], directorio_actual, usuario_actual, lista_directorios)
+            directorio_actual = retorno if retorno is not None else print("bash: cd: " + comando_partes[1] + " :No such file or directory")
         else:
             comando_ejecucion(comando, comando_partes, lista_directorios, lista_usuarios, usuario_actual, directorio_actual, raiz)

@@ -181,8 +181,6 @@ def ej_rm(nombre_archivo, directorio_actual, usuario_actual):
     esta = False
 
     for archivo in directorio_actual.archivos:
-        print(archivo.nombre + "~~~" + archivo.contenido)
-        print(contador)
         if archivo.nombre == nombre_archivo:
             archivo.contenido = ""
             esta = True
@@ -193,45 +191,29 @@ def ej_rm(nombre_archivo, directorio_actual, usuario_actual):
 
 
 def cd_aux(ruta, directorio_actual):
-    while len(ruta) != 0:
+
+    if not directorio_actual.subdirectorios:
+        return directorio_actual
+    else:
         for directorio in directorio_actual.subdirectorios:
             if ruta[0] == directorio.nombre:
                 ruta.pop(0)
-    return directorio
+                return cd_aux(ruta, directorio)
 
 
-def prueba(ruta, directorio_actual):
-
-    if not ruta:
-        return directorio_actual
-    else:
-        if not directorio_actual.subdirectorios:
-            pass
-        else:
-            for directorio in directorio_actual.subdirectorios:
-                if ruta[0] == directorio.nombre:
-                    ruta.pop(0)
-                    return prueba(ruta, directorio)
-
-
-def ej_cd2(ruta, directorio_actual, usuario_actual, lista_directorios):
+def ej_cd(ruta, directorio_actual, usuario_actual, lista_directorios):
 
     ruta_directorios = ruta.split("/")
     ruta_entera = False
-    # for directorio in directorio_actual.subdirectorios:
-    #     if directorio.nombre == ruta_directorios[0]:
-    #         ruta_entera = False
-    #         print("Ruta relativa")
 
-    if ruta != "" or ruta != "." or not (".txt" in ruta):
-        if ruta == "..":
-            if directorio_actual.directorio_padre is not None:
-                return directorio_actual.directorio_padre
-            else:
-                return directorio_actual
-        elif not ruta_entera:
-            return prueba(ruta_directorios, directorio_actual)
-
+    if ruta == "" or ruta == "." or not ruta_directorios or ".txt" in ruta:
+        return directorio_actual
+    elif ruta == "..":
+        return directorio_actual if directorio_actual.directorio_padre is None else directorio_actual.directorio_padre
+    elif ruta_entera:
+        pass
+    elif not ruta_entera:
+        return cd_aux(ruta_directorios, directorio_actual)
 
 def ej_lsl(directorio_actual, usuario_actual):
     for archivo in directorio_actual.archivos:
@@ -241,31 +223,49 @@ def ej_lsl(directorio_actual, usuario_actual):
 
 
 def ej_his_grep(palabra_buscar):
-    pass
-    """palabra_buscar = palabra_buscar.replace('"', '')
-    print(palabra_buscar)
-    linea = ""
+    palabra_buscar = palabra_buscar.replace('"', '')
+    retorno = ""
     for numero, comando in historial.items():
         linea = str(numero) + " " + comando
-        print(linea)
-        if palabra_buscar == linea:
-            print(linea)
-        if palabra_buscar.isupper() and linea == palabra_buscar.upper():
-            print(linea)
-        elif not (palabra_buscar.isupper()) and linea == palabra_buscar:
-            print(linea)"""
-    
-
-def ej_chmod():
-    pass
+        if palabra_buscar in linea:
+            retorno += linea + "\n"
+    print(retorno)
 
 
-def ej_chown():
-    pass
+def ej_chmod(valor, nombre_archivo, usuario_actual, directorio_actual):
+    permisos_nuevos = ["-", "rwx", "r-x", "r-x"]
+
+    for i in range(3):
+        j = i + 1
+        if valor[i] == '0':
+            permisos_nuevos[j] = "---"
+        elif valor[i] == '1':
+            permisos_nuevos[j] = "--x"
+        elif valor[i] == '2':
+            permisos_nuevos[j] = "-w-"
+        elif valor[i] == '3':
+            permisos_nuevos[j] = "-wx"
+        elif valor[i] == '4':
+            permisos_nuevos[j] = "r--"
+        elif valor[i] == '5':
+            permisos_nuevos[j] = "r-x"
+        elif valor[i] == '6':
+            permisos_nuevos[j] = "rw-"
+        elif valor[i] == '7':
+            permisos_nuevos[j] = "rwx"
+
+    for archivo in directorio_actual.archivos:
+        if archivo.nombre == nombre_archivo:
+            archivo.permisos = permisos_nuevos
 
 
-def mostrar_todo():     # Solo de prueba
-    pass
+def ej_chown(nombre_archivo, nuevo_propietario, usuario_actual, directorio_actual):
+
+    # Solo el root puede cambiar propietarios?
+
+    for archivo in directorio_actual.archivos:
+        if archivo.nombre == nombre_archivo:
+            archivo.propietario = nuevo_propietario
 
 
 def comando_ejecucion(comando_entero, comando_partes, lista_directorios, lista_usuarios, usuario_actual, directorio_actual, raiz):
@@ -280,11 +280,6 @@ def comando_ejecucion(comando_entero, comando_partes, lista_directorios, lista_u
 
     elif comando == "passwd":
         ej_passwd(comando_partes[1], lista_usuarios, usuario_actual)
-
-    #elif comando == "su":
-        #pass
-        # contrasena = input("Password: ")
-        # usuario_actual = ej_su(comando_partes[1], lista_usuarios, contrasena)
 
     elif comando == "pwd":
 
@@ -319,7 +314,6 @@ def comando_ejecucion(comando_entero, comando_partes, lista_directorios, lista_u
 
         try:
             ej_echo(texto, comando_partes[len(comando_partes)-1], directorio_actual, usuario_actual)
-            prueba_mostrar_contenido(directorio_actual, usuario_actual)
         except IndexError:
             print("error echo linux")
 
@@ -358,25 +352,5 @@ def comando_ejecucion(comando_entero, comando_partes, lista_directorios, lista_u
     elif comando == "ls":
         ej_lsl(directorio_actual, usuario_actual)
 
-    """switcher = {
-        "cd": ejecutar_cd(),
-        "useradd": ejecutar_useradd(),
-        "passwd": ejecutar_passwd(),
-        "su": ej_su(),
-        "whoami": ej_whoami(usuario_actual),
-        "pwd": ej_pwd(lista_directorios),
-        "mkdir": ek_mkdir(),
-        "touch": ej_touch(),
-        "echo": ej_echo(),
-        "mv": ej_mv(),
-        "cp": ej_cp(),
-        "cat": ej_cat(),
-        "rm": ej_rm(),
-        "ls -l": ej_lsl(),
-        "history": ej_history(),
-        "chmod": ej_chmod(),
-        "chown": ej_chown()
-        # comandoPrimero | comandoSegundo
-        # history | grep
-    }
-    switcher.get(comando)"""
+    elif comando == "chmod":
+        ej_chmod(comando_partes[1], comando_partes[2], usuario_actual, directorio_actual)
