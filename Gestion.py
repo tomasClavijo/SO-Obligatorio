@@ -5,16 +5,17 @@ from Archivo import Archivo
 historial = {}
 
 
-def leer_ruta():
-    pass
-
-
-def ej_useradd(nombre_usuario, lista_usuarios):
-    if lista_usuarios.count(nombre_usuario) == 0:
-        nuevo_usuario = Usuario(nombre_usuario)
-        lista_usuarios.append(nuevo_usuario)
+def ej_useradd(nombre_usuario, lista_usuarios, usuario_actual):
+    if usuario_actual.nombre == "root":
+        existe = False
+        for usuario in lista_usuarios:
+            if usuario.nombre == nombre_usuario:
+                existe = True
+        if not existe:
+            nuevo_usuario = Usuario(nombre_usuario)
+            lista_usuarios.append(nuevo_usuario)
     else:
-        print("Ver el mensaje de error que sale en Linux.")
+        print(f"{usuario_actual.nombre} is not in the sudoers file.")
 
 
 def ej_passwd(nombre_usuario, lista_usuarios, usuario_actual):
@@ -22,17 +23,19 @@ def ej_passwd(nombre_usuario, lista_usuarios, usuario_actual):
         esta = False
         for usuario in lista_usuarios:
             if usuario.nombre == nombre_usuario:
-                contrasena_ingresada = input("Password: ")
-                contrasena_ingresada_dos = input("Password: ")
+                contrasena_ingresada = input("New password: ")
+                contrasena_ingresada_dos = input("Retype new password: ")
                 if contrasena_ingresada == contrasena_ingresada_dos:
                     usuario.ingresar_contrasena(contrasena_ingresada)
+                    print("passwd: password updated successfully")
                     esta = True
                 else:
-                    print("mensaje de error")
+                    print("Sorry, passwords do not match.")
+                    print("passwd: Authenticacion token manipulation error \n passwd: password unchanged")
         if not esta:
-            print("Ver el mensaje de error que sale en Linux.")
+            print(f"passwd: user {nombre_usuario} does not exist")
     else:
-        print("Ver mensaje de error en linux")
+        print(f"passwd: You may not view or modify password information for {nombre_usuario}")
 
 
 def ej_su(nombre_usuario, contrasena, usuarios, usuario_actual):
@@ -44,10 +47,10 @@ def ej_su(nombre_usuario, contrasena, usuarios, usuario_actual):
                 historial = {}  # Se reinicia el historial cuando se cambia de usuario.
                 return usuario
             else:
-                print("ver mensaje de contrasena incorrecta")
+                print("su: Authentication failure")
                 return usuario_actual
     if not esta:
-        print("ver error SU en linux")
+        print("su: user " + nombre_usuario + " does not exist or the user entry does not contain all the required fields")
         return usuario_actual
 
 
@@ -71,38 +74,6 @@ def ej_mkdir(nombre, directorio_actual, usuario_actual):
     directorio_actual.subdirectorios.append(nuevo)
 
 
-def ejecutar_cd(directorio_actual, ruta=str):
-
-    if ruta == "..":
-        directorio_actual = directorio_actual.directorio_padre
-        
-
-    """ruta_origen_lista = ruta_origen.split("/")
-    ruta_destino_lista = ruta_destino.split("/")
-    directorio_aux = raiz
-    print(directorio_actual)
-
-    if raiz.nombre == ruta_origen_lista[0]: # Caso ruta completa.
-        contador = 1
-        correcta = True
-        while contador != len(ruta_origen_lista)-1 and correcta:
-            for i in directorio_aux.subdirectorios:
-                if i.nombre == ruta_origen_lista[contador]:
-                    contador += 1
-                    directorio_aux = i
-                else:
-                    print("ruta mala, error linux")
-                    correcta = False
-        if correcta:
-            for i in directorio_aux.archivos:
-                if i.nombre == ruta_origen_lista[len(ruta_origen_lista)-1]:
-                    pass
-                    # mover
-        
-    else: # Caso ruta desde posicion relativa.
-        pass"""
-
-
 def ej_touch(directorio, nombre_archivo, nuevo_propietario, contenido):
 
     nuevo_archivo = Archivo(nombre_archivo, nuevo_propietario, contenido)
@@ -114,19 +85,17 @@ def ej_echo(texto_archivo, nombre_archivo, directorio_actual, usuario_actual):
 
     esta = False
 
-    """ Consulta, el archivo se asume como creado? """
+    # Para hacer el echo necesito permisos de escritura.
     for archivo in directorio_actual.archivos:
         if archivo.nombre == nombre_archivo:
-            archivo.contenido += texto_archivo+"\n"
+            archivo.contenido += texto_archivo + "\n"
             esta = True
 
     if not esta:
         ej_touch(directorio_actual, nombre_archivo, usuario_actual, texto_archivo)
 
+        #print(f"bash: {nombre_archivo}: Permission denied")
 
-def prueba_mostrar_contenido(directorio_actual, usuario_actual):
-    for i in directorio_actual.archivos:
-        print(i.nombre + i.contenido)
 
 
 def ej_mv(ruta_origen, ruta_destino, usuario_actual, directorio_actual, raiz):
@@ -190,15 +159,19 @@ def ej_rm(nombre_archivo, directorio_actual, usuario_actual):
         print("rm: cannot remove " + nombre_archivo + ": No such file or directory")
 
 
-def cd_aux(ruta, directorio_actual):
-
+def cd_aux(ruta_directorios, _ruta_llamada, directorio_actual, _directorio_llamada):
+    esta = False
     if not directorio_actual.subdirectorios:
         return directorio_actual
     else:
         for directorio in directorio_actual.subdirectorios:
-            if ruta[0] == directorio.nombre:
-                ruta.pop(0)
-                return cd_aux(ruta, directorio)
+            if ruta_directorios[0] == directorio.nombre:
+                esta = True
+                ruta_directorios.pop(0)
+                return cd_aux(ruta_directorios, _ruta_llamada, directorio, _directorio_llamada)
+        if not esta:
+            print("bash: cd: " + _ruta_llamada + ": No such file or directory")
+            return _directorio_llamada
 
 
 def ej_cd(ruta, directorio_actual, usuario_actual, lista_directorios):
@@ -213,7 +186,8 @@ def ej_cd(ruta, directorio_actual, usuario_actual, lista_directorios):
     elif ruta_entera:
         pass
     elif not ruta_entera:
-        return cd_aux(ruta_directorios, directorio_actual)
+        return cd_aux(ruta_directorios, ruta, directorio_actual, directorio_actual)
+
 
 def ej_lsl(directorio_actual, usuario_actual):
     for archivo in directorio_actual.archivos:
@@ -232,7 +206,7 @@ def ej_his_grep(palabra_buscar):
     print(retorno)
 
 
-def ej_chmod(valor, nombre_archivo, usuario_actual, directorio_actual):
+def ej_chmod(valor, nombre_archivo_directorio, usuario_actual, directorio_actual):
     permisos_nuevos = ["-", "rwx", "r-x", "r-x"]
 
     for i in range(3):
@@ -254,24 +228,43 @@ def ej_chmod(valor, nombre_archivo, usuario_actual, directorio_actual):
         elif valor[i] == '7':
             permisos_nuevos[j] = "rwx"
 
-    for archivo in directorio_actual.archivos:
-        if archivo.nombre == nombre_archivo:
-            archivo.permisos = permisos_nuevos
+    if ".txt" in nombre_archivo_directorio:
+        for archivo in directorio_actual.archivos:
+            if archivo.nombre == nombre_archivo_directorio:
+                if archivo.propietario == usuario_actual or usuario_actual.nombre == "root":
+                    archivo.permisos = permisos_nuevos
+                else:
+                    print(f"chmod: changing permissions of {nombre_archivo_directorio}: Operation not permitted")
+    else:
+        for directorio in directorio_actual.subdirectorios:
+            if directorio.nombre == nombre_archivo_directorio:
+                if directorio.propietario == usuario_actual or usuario_actual.nombre == "root":
+                    directorio.permisos = permisos_nuevos
+                else:
+                    print(f"chmod: changing permissions of {nombre_archivo_directorio}: Operation not permitted")
 
 
 def ej_chown(nombre_archivo, nuevo_propietario, usuario_actual, directorio_actual):
-
-    # Solo el root puede cambiar propietarios?
-
-    for archivo in directorio_actual.archivos:
-        if archivo.nombre == nombre_archivo:
-            archivo.propietario = nuevo_propietario
+    if usuario_actual.nombre == "root":
+        contrasena = input("Password: ")
+        if usuario_actual.contrasena == contrasena:
+            if ".txt" in nombre_archivo:
+                for archivo in directorio_actual.archivos:
+                    if archivo.nombre == nombre_archivo:
+                        archivo.propietario = nuevo_propietario
+            else:
+                for directorio in directorio_actual.subdirectorios:
+                    if directorio.nombre == nombre_archivo:
+                        directorio.propietario = nuevo_propietario
+        else:
+            print("password incorrecta")
+    else:
+        print("error solo el root puede cambiar permisos.")
 
 
 def comando_ejecucion(comando_entero, comando_partes, lista_directorios, lista_usuarios, usuario_actual, directorio_actual, raiz):
     if comando_entero != "":
         historial[len(historial) + 1] = comando_entero
-    #comando_partes = comando_ejecutar.split(" ")
     comando = comando_partes[0]
 
     if comando == "useradd":
@@ -334,12 +327,6 @@ def comando_ejecucion(comando_entero, comando_partes, lista_directorios, lista_u
             ej_cat(comando_partes[1], directorio_actual, usuario_actual)
         except IndexError:
             print("error archivo linux")
-
-    elif comando == "cd":
-        try:
-            ejecutar_cd(directorio_actual, comando_partes[1])
-        except IndexError:
-            print("Ver mensaje de error en linux")
 
     elif comando == "history":
         try:

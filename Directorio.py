@@ -8,6 +8,7 @@ class Directorio(object):
     subdirectorios = []
     permisos = []
     fecha = str
+    propietario = object
 
     def __init__(self, nombre_nuevo, nuevo_propietario):
         self.nombre = nombre_nuevo
