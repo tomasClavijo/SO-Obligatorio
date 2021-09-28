@@ -81,21 +81,27 @@ def ej_touch(directorio, nombre_archivo, nuevo_propietario, contenido):
     directorio.archivos.append(nuevo_archivo)
 
 
+def permisos(usuario_actual, archivo_directorio):
+
+    if archivo_directorio.propietario == usuario_actual:
+        return archivo_directorio.permisos[1]
+    else:
+        return archivo_directorio.permisos[3]
+
+
 def ej_echo(texto_archivo, nombre_archivo, directorio_actual, usuario_actual):
-
     esta = False
-
-    # Para hacer el echo necesito permisos de escritura.
     for archivo in directorio_actual.archivos:
-        if archivo.nombre == nombre_archivo:
-            archivo.contenido += texto_archivo + "\n"
-            esta = True
-
-    if not esta:
+        if archivo == nombre_archivo:
+            if "w" in permisos(usuario_actual, archivo): # Si se puede escribir el archivo.
+                archivo.contenido += texto_archivo + "\n"
+                esta = True
+            else:
+                print(f"bash: {nombre_archivo}: Permission denied")
+    if not esta and "w" in permisos(usuario_actual, directorio_actual): # Si se puede escribir el directorio para crear un nuevo archivo.
         ej_touch(directorio_actual, nombre_archivo, usuario_actual, texto_archivo)
-
-        #print(f"bash: {nombre_archivo}: Permission denied")
-
+    else:
+        print(f"bash: {nombre_archivo}: Permission denied")
 
 
 def ej_mv(ruta_origen, ruta_destino, usuario_actual, directorio_actual, raiz):
@@ -135,14 +141,15 @@ def ej_cp():
 
 def ej_cat(nombre_archivo, directorio_actual, usuario_actual):
     esta = False
-
     for archivo in directorio_actual.archivos:
         if archivo.nombre == nombre_archivo:
-            print(archivo.contenido)
             esta = True
-
+            if "r" in permisos(usuario_actual, archivo):
+                print(archivo.contenido)
+            else:
+                print(f"cat: {nombre_archivo}: Permission denied")
     if not esta:
-        print("cat: "+nombre_archivo+": No such file or directory")
+        print(f"cat: {nombre_archivo}: No such file or directory")
 
 
 def ej_rm(nombre_archivo, directorio_actual, usuario_actual):
@@ -269,7 +276,7 @@ def comando_ejecucion(comando_entero, comando_partes, lista_directorios, lista_u
 
     if comando == "useradd":
 
-        ej_useradd(comando_partes[1], lista_usuarios)
+        ej_useradd(comando_partes[1], lista_usuarios, usuario_actual)
 
     elif comando == "passwd":
         ej_passwd(comando_partes[1], lista_usuarios, usuario_actual)

@@ -17,7 +17,7 @@ class Directorio(object):
         self.propietario = nuevo_propietario
         fecha = datetime.datetime.now()
         self.fecha = fecha.strftime("%b %d %H:%M")
-        self.permisos = ["d", "rwx", "r-x", "r-x"]  # Permisos por defecto.
+        self.permisos = ['d', "rwx", "r-x", "r-x"]  # Permisos por defecto.
         # [0] si es directorio
         # [1] permisos del propietario
         # [2] permisos del grupo

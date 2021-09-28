@@ -16,7 +16,7 @@ class Archivo(object):
         self.contenido = contenido
         fecha = datetime.datetime.now()
         self.fecha = fecha.strftime("%b %d %H:%M")
-        self.permisos = ["-", "rwx", "r-x", "r-x"]  # Permisos por defecto.
+        self.permisos = ['-', "rwx", "r-x", "r-x"]  # Permisos por defecto.
         # [0] si es directorio
         # [1] permisos del propietario
         # [2] permisos del grupo
