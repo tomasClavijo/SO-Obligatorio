@@ -50,7 +50,7 @@ def ej_su(nombre_usuario, contrasena, usuarios, usuario_actual):
                 print("su: Authentication failure")
                 return usuario_actual
     if not esta:
-        print("su: user " + nombre_usuario + " does not exist or the user entry does not contain all the required fields")
+        print(f"su: user {nombre_usuario} does not exist or the user entry does not contain all the required fields")
         return usuario_actual
 
 
@@ -68,21 +68,28 @@ def ej_pwd(directorio_actual):
     print(retorno)
 
 
-def ej_mkdir(nombre, directorio_actual, usuario_actual):
-    nuevo = Directorio(nombre, usuario_actual)
-    nuevo.directorio_padre = directorio_actual
-    directorio_actual.subdirectorios.append(nuevo)
+def ej_mkdir(nombre_directorio, directorio_actual, usuario_actual):
+    # MKDIR: permiso de escritura necesario sobre el directorio.
+    if "w" in permisos(usuario_actual, directorio_actual):
+        nuevo = Directorio(nombre_directorio, usuario_actual)
+        nuevo.directorio_padre = directorio_actual
+        directorio_actual.subdirectorios.append(nuevo)
+    else:
+        print(f"mkdir: cannot create directory '{nombre_directorio}': Permission denied")
 
 
-def ej_touch(directorio, nombre_archivo, nuevo_propietario, contenido):
+def ej_touch(directorio_actual, nombre_archivo, nuevo_propietario, contenido):
+    # TOUCH: permiso de escritura sobre el directorio.
 
-    nuevo_archivo = Archivo(nombre_archivo, nuevo_propietario, contenido)
-    nuevo_archivo.directorio = directorio
-    directorio.archivos.append(nuevo_archivo)
+    if "w" in permisos(nuevo_propietario, directorio_actual):
+        nuevo_archivo = Archivo(nombre_archivo, nuevo_propietario, contenido)
+        nuevo_archivo.directorio = directorio_actual
+        directorio_actual.archivos.append(nuevo_archivo)
+    else:
+        print(f"touch: cannot touch '{nombre_archivo}': Permission denied")
 
 
 def permisos(usuario_actual, archivo_directorio):
-
     if archivo_directorio.propietario == usuario_actual:
         return archivo_directorio.permisos[1]
     else:
@@ -93,19 +100,18 @@ def ej_echo(texto_archivo, nombre_archivo, directorio_actual, usuario_actual):
     esta = False
     for archivo in directorio_actual.archivos:
         if archivo == nombre_archivo:
-            if "w" in permisos(usuario_actual, archivo): # Si se puede escribir el archivo.
+            if "w" in permisos(usuario_actual, archivo):  # Si se puede escribir el archivo.
                 archivo.contenido += texto_archivo + "\n"
                 esta = True
             else:
                 print(f"bash: {nombre_archivo}: Permission denied")
-    if not esta and "w" in permisos(usuario_actual, directorio_actual): # Si se puede escribir el directorio para crear un nuevo archivo.
+    if not esta and "w" in permisos(usuario_actual, directorio_actual):
         ej_touch(directorio_actual, nombre_archivo, usuario_actual, texto_archivo)
     else:
         print(f"bash: {nombre_archivo}: Permission denied")
 
 
 def ej_mv(ruta_origen, ruta_destino, usuario_actual, directorio_actual, raiz):
-
     # ["/", "a1", "b2"]
 
     ruta_origen_lista = ruta_origen.split("/")
@@ -113,10 +119,10 @@ def ej_mv(ruta_origen, ruta_destino, usuario_actual, directorio_actual, raiz):
     directorio_aux = raiz
     print(directorio_actual)
 
-    if raiz.nombre == ruta_origen_lista[0]: # Caso ruta completa.
+    if raiz.nombre == ruta_origen_lista[0]:  # Caso ruta completa.
         contador = 1
         correcta = True
-        while contador != len(ruta_origen_lista)-1 and correcta:
+        while contador != len(ruta_origen_lista) - 1 and correcta:
             for i in directorio_aux.subdirectorios:
                 if i.nombre == ruta_origen_lista[contador]:
                     contador += 1
@@ -127,11 +133,11 @@ def ej_mv(ruta_origen, ruta_destino, usuario_actual, directorio_actual, raiz):
 
         if correcta:
             for i in directorio_aux.archivos:
-                if i.nombre == ruta_origen_lista[len(ruta_origen_lista)-1]:
+                if i.nombre == ruta_origen_lista[len(ruta_origen_lista) - 1]:
                     pass
                     # mover
 
-    else: # Caso ruta desde posicion relativa.
+    else:  # Caso ruta desde posicion relativa.
         pass
 
 
@@ -147,23 +153,26 @@ def ej_cat(nombre_archivo, directorio_actual, usuario_actual):
             if "r" in permisos(usuario_actual, archivo):
                 print(archivo.contenido)
             else:
-                print(f"cat: {nombre_archivo}: Permission denied")
+                print(f"cat: '{nombre_archivo}': Permission denied")
     if not esta:
-        print(f"cat: {nombre_archivo}: No such file or directory")
+        print(f"cat: '{nombre_archivo}': No such file or directory")
 
 
 def ej_rm(nombre_archivo, directorio_actual, usuario_actual):
+    # RM: permisos de lectura y escritura sobre el DIRECTORIO.
     contador = 0
     esta = False
-
     for archivo in directorio_actual.archivos:
         if archivo.nombre == nombre_archivo:
-            archivo.contenido = ""
             esta = True
+            if "r" and "w" in permisos(usuario_actual, directorio_actual):
+                archivo.contenido = ""
+                directorio_actual.archivos.pop(contador)
+            else:
+                print(f"rm: cannot remove '{nombre_archivo}': Permission denied")
         contador += 1
-        directorio_actual.archivos.pop(contador)
     if not esta:
-        print("rm: cannot remove " + nombre_archivo + ": No such file or directory")
+        print(f"rm: cannot remove '{nombre_archivo}': No such file or directory")
 
 
 def cd_aux(ruta_directorios, _ruta_llamada, directorio_actual, _directorio_llamada):
@@ -177,11 +186,13 @@ def cd_aux(ruta_directorios, _ruta_llamada, directorio_actual, _directorio_llama
                 ruta_directorios.pop(0)
                 return cd_aux(ruta_directorios, _ruta_llamada, directorio, _directorio_llamada)
         if not esta:
-            print("bash: cd: " + _ruta_llamada + ": No such file or directory")
+            print(f"bash: cd: {_ruta_llamada}: No such file or directory")
             return _directorio_llamada
 
 
 def ej_cd(ruta, directorio_actual, usuario_actual, lista_directorios):
+
+    # CD: permisos de ejecucion sobre el directorio. TODO
 
     ruta_directorios = ruta.split("/")
     ruta_entera = False
@@ -197,10 +208,14 @@ def ej_cd(ruta, directorio_actual, usuario_actual, lista_directorios):
 
 
 def ej_lsl(directorio_actual, usuario_actual):
-    for archivo in directorio_actual.archivos:
-        archivo.mostrar_datos()
-    for directorio in directorio_actual.subdirectorios:
-        directorio.mostrar_datos()
+    # LS: permiso de lectura sobre el directorio.
+    if "r" in permisos(usuario_actual, directorio_actual):
+        for archivo in directorio_actual.archivos:
+            archivo.mostrar_datos()
+        for directorio in directorio_actual.subdirectorios:
+            directorio.mostrar_datos()
+    else:
+        print(f"ls: cannot open directory '.': Permission denied")
 
 
 def ej_his_grep(palabra_buscar):
@@ -269,7 +284,8 @@ def ej_chown(nombre_archivo, nuevo_propietario, usuario_actual, directorio_actua
         print("error solo el root puede cambiar permisos.")
 
 
-def comando_ejecucion(comando_entero, comando_partes, lista_directorios, lista_usuarios, usuario_actual, directorio_actual, raiz):
+def comando_ejecucion(comando_entero, comando_partes, lista_directorios, lista_usuarios, usuario_actual,
+                      directorio_actual, raiz):
     if comando_entero != "":
         historial[len(historial) + 1] = comando_entero
     comando = comando_partes[0]
@@ -309,11 +325,11 @@ def comando_ejecucion(comando_entero, comando_partes, lista_directorios, lista_u
     elif comando == "echo":
         comando_partes.pop(0)
 
-        texto_lista = comando_partes[0:len(comando_partes)-2]
+        texto_lista = comando_partes[0:len(comando_partes) - 2]
         texto = " ".join(texto_lista)
 
         try:
-            ej_echo(texto, comando_partes[len(comando_partes)-1], directorio_actual, usuario_actual)
+            ej_echo(texto, comando_partes[len(comando_partes) - 1], directorio_actual, usuario_actual)
         except IndexError:
             print("error echo linux")
 
