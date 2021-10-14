@@ -33,4 +33,4 @@ class Directorio(object):
         permisos = ""
         for permiso in self.permisos:
             permisos += permiso
-        print(permisos + " " + self.propietario.nombre + self.fecha + " " + self.nombre)
+        print(permisos + " " + self.propietario.nombre + " " + self.fecha + " " + self.nombre)

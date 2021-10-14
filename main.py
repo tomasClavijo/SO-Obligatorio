@@ -13,6 +13,7 @@ if __name__ == "__main__":
     usuario_principal = Usuario("root")
     usuario_principal.ingresar_contrasena("root")
     raiz = Directorio("directorioPrincipal", usuario_principal)
+    raiz.permisos = ['d', "rwx", "rwx", "rwx"]
     raiz.directorio_padre = None
 
     lista_usuarios.append(usuario_principal)

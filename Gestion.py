@@ -3,6 +3,13 @@ from Usuario import Usuario
 from Archivo import Archivo
 
 
+def permisos(usuario_actual, archivo_directorio):
+    if archivo_directorio.propietario == usuario_actual:
+        return archivo_directorio.permisos[1]
+    else:
+        return archivo_directorio.permisos[3]
+
+
 def ej_useradd(nombre_usuario, lista_usuarios, usuario_actual):
     if usuario_actual.nombre == "root":
         existe = False
@@ -13,6 +20,8 @@ def ej_useradd(nombre_usuario, lista_usuarios, usuario_actual):
             nuevo_usuario = Usuario(nombre_usuario)
             lista_usuarios.append(nuevo_usuario)
             ej_passwd(nuevo_usuario.nombre, lista_usuarios, usuario_actual)
+        else:
+            print(f"useradd: user '{nombre_usuario}' already exists")
     else:
         print(f"{usuario_actual.nombre} is not in the sudoers file.")
 
@@ -89,13 +98,6 @@ def ej_touch(directorio_actual, nombre_archivo, nuevo_propietario, contenido):
         directorio_actual.archivos.append(nuevo_archivo)
     else:
         print(f"touch: cannot touch '{nombre_archivo}': Permission denied")
-
-
-def permisos(usuario_actual, archivo_directorio):
-    if archivo_directorio.propietario == usuario_actual:
-        return archivo_directorio.permisos[1]
-    else:
-        return archivo_directorio.permisos[3]
 
 
 def ej_echo(texto_archivo, nombre_archivo, directorio_actual, usuario_actual):
@@ -200,7 +202,7 @@ def ej_rm(nombre_archivo, directorio_actual, usuario_actual):
         print(f"rm: cannot remove '{nombre_archivo}': No such file or directory")
 
 
-def cd_aux(ruta_directorios, ruta, directorio_actual, _directorio_llamada):
+def cd_ruta_especifica(ruta_directorios, ruta, directorio_actual, _directorio_llamada):
     esta = False
     if not directorio_actual.subdirectorios:
         return directorio_actual
@@ -209,13 +211,13 @@ def cd_aux(ruta_directorios, ruta, directorio_actual, _directorio_llamada):
             if ruta_directorios[0] == directorio.nombre:
                 esta = True
                 ruta_directorios.pop(0)
-                return cd_aux(ruta_directorios, ruta, directorio, _directorio_llamada)
+                return cd_ruta_especifica(ruta_directorios, ruta, directorio, _directorio_llamada)
         if not esta:
             print(f"bash: cd: {ruta}: No such file or directory")
             return _directorio_llamada
 
 
-def cd_aux2(ruta_directorios, ruta, lista_directorios, directorio_actual, _directorio_actual):
+def cd_ruta_entera(ruta_directorios, ruta, lista_directorios, directorio_actual, _directorio_actual):
     esta = False
     if not lista_directorios.subdirectorios:
         return directorio_actual
@@ -224,7 +226,7 @@ def cd_aux2(ruta_directorios, ruta, lista_directorios, directorio_actual, _direc
             if ruta_directorios[0] == directorio.nombre:
                 esta = True
                 ruta_directorios.pop(0)
-                return cd_aux2(ruta_directorios, lista_directorios.subdirectorios, directorio, _directorio_actual)
+                return cd_ruta_entera(ruta_directorios, lista_directorios.subdirectorios, directorio, _directorio_actual)
         if not esta:
             print(f"bash: cd: {ruta}: No such file or directory")
             return _directorio_actual
@@ -245,10 +247,10 @@ def ej_cd(ruta, directorio_actual, usuario_actual, lista_directorios):
         return directorio_actual if directorio_actual.directorio_padre is None else directorio_actual.directorio_padre
     elif ruta_entera:
         ruta_directorios2 = ruta.split("/")
-        return cd_aux2(ruta_directorios2, ruta, lista_directorios, directorio_actual, directorio_actual)
+        return cd_ruta_entera(ruta_directorios2, ruta, lista_directorios, directorio_actual, directorio_actual)
     elif not ruta_entera:
         ruta_directorios3 = ruta.split("/")
-        return cd_aux(ruta_directorios3, ruta, directorio_actual, directorio_actual)
+        return cd_ruta_especifica(ruta_directorios3, ruta, directorio_actual, directorio_actual)
 
 
 def ej_lsl(directorio_actual, usuario_actual):
@@ -310,22 +312,23 @@ def ej_chmod(valor, nombre_archivo_directorio, usuario_actual, directorio_actual
                     print(f"chmod: changing permissions of {nombre_archivo_directorio}: Operation not permitted")
 
 
-def ej_chown(nombre_archivo, nuevo_propietario, usuario_actual, directorio_actual):
+def ej_chown(nombre_archivo, nuevo_propietario, usuario_actual, directorio_actual, lista_usuarios):
     if usuario_actual.nombre == "root":
-        contrasena = input("Password: ")
-        if usuario_actual.contrasena == contrasena:
-            if ".txt" in nombre_archivo:
-                for archivo in directorio_actual.archivos:
-                    if archivo.nombre == nombre_archivo:
-                        archivo.propietario = nuevo_propietario
-            else:
-                for directorio in directorio_actual.subdirectorios:
-                    if directorio.nombre == nombre_archivo:
-                        directorio.propietario = nuevo_propietario
+        nuevo_propietario_objeto = None
+        for usuario in lista_usuarios:
+            if usuario.nombre == nuevo_propietario:
+                nuevo_propietario_objeto = usuario
+
+        if ".txt" in nombre_archivo:
+            for archivo in directorio_actual.archivos:
+                if archivo.nombre == nombre_archivo:
+                    archivo.propietario = nuevo_propietario_objeto
         else:
-            print("password incorrecta")
+            for directorio in directorio_actual.subdirectorios:
+                if directorio.nombre == nombre_archivo:
+                    directorio.propietario = nuevo_propietario_objeto
     else:
-        print("error solo el root puede cambiar permisos.")
+        print(f"chown: changing ownership of '{nombre_archivo}': Operation not permitted")
 
 
 def comando_ejecucion(comando_entero, comando_partes, lista_directorios, lista_usuarios, usuario_actual,
@@ -405,15 +408,16 @@ def comando_ejecucion(comando_entero, comando_partes, lista_directorios, lista_u
     elif comando == "history":
         try:
             if comando == "history" and comando_partes[2] == "grep":
-                ej_his_grep(comando_partes[3])
+                ej_his_grep(comando_partes[3], historial)
         except IndexError:
             for numero, comando in historial.items():
                 print(str(numero) + " " + comando)
 
     elif comando == "ls":
         ej_lsl(directorio_actual, usuario_actual)
-
     elif comando == "chmod":
         ej_chmod(comando_partes[1], comando_partes[2], usuario_actual, directorio_actual)
+    elif comando == "chown":
+        ej_chown(comando_partes[2], comando_partes[1], usuario_actual, directorio_actual, lista_usuarios)
     else:
         print(f"bash: {comando_entero}: command not found")
