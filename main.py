@@ -21,6 +21,10 @@ if __name__ == "__main__":
     usuario_actual = usuario_principal
     directorio_actual = raiz
 
+    historial = {}
+
+    # agregar historial para estos comandos , que el su y el cd tambien se agreguen al historial
+
     while True:
         comando = input(usuario_actual.nombre + "@&_")
         comando_partes = comando.split(" ")
@@ -28,10 +32,15 @@ if __name__ == "__main__":
             break
         elif comando_partes[0] == "su":
             contrasena = input("Password: ")
+            historial[len(historial) + 1] = comando
+            nombre_anterior = usuario_actual.nombre
             usuario_actual = ej_su(comando_partes[1], contrasena, lista_usuarios, usuario_actual)
+            if nombre_anterior != usuario_actual.nombre: # Si cambio de usuario se reinicia el historial.
+                historial.clear()
+
             pass
         elif comando_partes[0] == "cd":
+            historial[len(historial) + 1] = comando
             directorio_actual = ej_cd(comando_partes[1], directorio_actual, usuario_actual, lista_directorios)
-            #directorio_actual = retorno if retorno is not None else print("bash: cd: " + comando_partes[1] + " :No such file or directory")
         else:
-            comando_ejecucion(comando, comando_partes, lista_directorios, lista_usuarios, usuario_actual, directorio_actual, raiz)
+            comando_ejecucion(comando, comando_partes, lista_directorios, lista_usuarios, usuario_actual, directorio_actual, raiz, historial)
