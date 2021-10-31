@@ -1,6 +1,0 @@
-
-Ver si puedo generaliar un metodo de enontrar archivo y directorio e un diretorio. Capaz puedo haer que lo retorne.
-
-
-
-mv

@@ -1,4 +1,0 @@
-# Para ignorar las carpetas .idea y __pycache__ en los commits.
-
-.idea/
-__pycache__/
