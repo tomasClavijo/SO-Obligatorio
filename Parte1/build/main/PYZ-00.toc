@@ -1,5 +1,5 @@
 ('C:\\Users\\59891\\Desktop\\Universidad\\Semestre 4\\Sistemas '
- 'Operativos\\3-Obligatorio\\Obligatorio SO\\build\\main\\PYZ-00.pyz',
+ 'Operativos\\3-Obligatorio\\Obligatorio SO\\Parte1\\build\\main\\PYZ-00.pyz',
  [('inspect', 'c:\\users\\59891\\anaconda3\\lib\\inspect.py', 'PYMODULE'),
   ('importlib',
    'c:\\users\\59891\\anaconda3\\lib\\importlib\\__init__.py',
@@ -9,9 +9,6 @@
    'PYMODULE'),
   ('importlib.metadata',
    'c:\\users\\59891\\anaconda3\\lib\\importlib\\metadata.py',
-   'PYMODULE'),
-  ('importlib.abc',
-   'c:\\users\\59891\\anaconda3\\lib\\importlib\\abc.py',
    'PYMODULE'),
   ('contextlib', 'c:\\users\\59891\\anaconda3\\lib\\contextlib.py', 'PYMODULE'),
   ('configparser',
@@ -609,6 +606,9 @@
    'c:\\users\\59891\\anaconda3\\lib\\email\\errors.py',
    'PYMODULE'),
   ('csv', 'c:\\users\\59891\\anaconda3\\lib\\csv.py', 'PYMODULE'),
+  ('importlib.abc',
+   'c:\\users\\59891\\anaconda3\\lib\\importlib\\abc.py',
+   'PYMODULE'),
   ('importlib._bootstrap',
    'c:\\users\\59891\\anaconda3\\lib\\importlib\\_bootstrap.py',
    'PYMODULE'),
@@ -633,18 +633,18 @@
   ('os', 'c:\\users\\59891\\anaconda3\\lib\\os.py', 'PYMODULE'),
   ('Gestion',
    'C:\\Users\\59891\\Desktop\\Universidad\\Semestre 4\\Sistemas '
-   'Operativos\\3-Obligatorio\\Obligatorio SO\\Gestion.py',
+   'Operativos\\3-Obligatorio\\Obligatorio SO\\Parte1\\Gestion.py',
    'PYMODULE'),
   ('Archivo',
    'C:\\Users\\59891\\Desktop\\Universidad\\Semestre 4\\Sistemas '
-   'Operativos\\3-Obligatorio\\Obligatorio SO\\Archivo.py',
+   'Operativos\\3-Obligatorio\\Obligatorio SO\\Parte1\\Archivo.py',
    'PYMODULE'),
   ('Directorio',
    'C:\\Users\\59891\\Desktop\\Universidad\\Semestre 4\\Sistemas '
-   'Operativos\\3-Obligatorio\\Obligatorio SO\\Directorio.py',
+   'Operativos\\3-Obligatorio\\Obligatorio SO\\Parte1\\Directorio.py',
    'PYMODULE'),
   ('Usuario',
    'C:\\Users\\59891\\Desktop\\Universidad\\Semestre 4\\Sistemas '
-   'Operativos\\3-Obligatorio\\Obligatorio SO\\Usuario.py',
+   'Operativos\\3-Obligatorio\\Obligatorio SO\\Parte1\\Usuario.py',
    'PYMODULE'),
   ('typing', 'c:\\users\\59891\\anaconda3\\lib\\typing.py', 'PYMODULE')])

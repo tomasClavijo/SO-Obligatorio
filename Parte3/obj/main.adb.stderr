@@ -1,0 +1,4 @@
+main.adb:33:04: warning: no accept for entry "Start" [enabled by default]
+main.adb:48:04: warning: no accept for entry "Start" [enabled by default]
+main.adb:62:04: warning: no accept for entry "Start" [enabled by default]
+main.adb:76:04: warning: no accept for entry "Start" [enabled by default]
